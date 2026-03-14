@@ -1,2 +1,0 @@
-# kanistus.github
-my portfolio
