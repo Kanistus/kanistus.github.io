@@ -924,10 +924,24 @@
   <div class="footer-copy">© 2025 · Designed with intent · Tamil Nadu, India</div>
 </footer>
 
+<script>
   // Scroll fade-in
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) e.target.classList.add('visible');
     });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Animate skill bars on scroll
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
+          bar.style.width = bar.getAttribute('data-width');
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.skill-bar').forEach(el => skillObserver.observe(el));
+</script>
