@@ -456,7 +456,7 @@
 
   /* ── ANIMATIONS ── */
   .fade-in {
-    opacity: 1; transform: none;
+    opacity: 0; transform: translateY(20px);
     transition: opacity 0.7s ease, transform 0.7s ease;
   }
   .fade-in.visible { opacity: 1; transform: none; }
@@ -883,11 +883,11 @@
       <div class="contact-left">
         <p>I am actively looking for roles in supply chain management, operations consulting, and business analytics. If you are a recruiter, consulting firm, or business leader looking for someone who brings both analytical rigor and an entrepreneurial mindset, I would love to connect.</p>
         <div class="contact-links">
-          <a href="/cdn-cgi/l/email-protection#4b202a2522383f3e383d260b2c262a222765282426" class="contact-link">
+          <a href="mailto:kanistusvm@gmail.com" class="contact-link">
   <div class="contact-link-icon">✉</div>
   <div class="contact-link-info">
     <div class="contact-link-label">Email</div>
-    <div class="contact-link-val"><span class="__cf_email__" data-cfemail="5b303a3532282f2e282d361b3c363a323775383436">[email&#160;protected]</span></div>
+    <div class="contact-link-val">kanistusvm@gmail.com</div>
   </div>
 </a>
           <a href="https://linkedin.com/in/kanistus/" class="contact-link" target="_blank">
@@ -942,10 +942,26 @@
   <div class="footer-copy">© 2025 · Designed with intent · Tamil Nadu, India</div>
 </footer>
 
+<script>
   // Scroll fade-in
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) e.target.classList.add('visible');
     });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Animate skill bars on scroll
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.getAttribute('data-width') || bar.style.width;
+        });
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('#skills').forEach(el => skillObserver.observe(el));
+</script>
+</body>
+</html>
