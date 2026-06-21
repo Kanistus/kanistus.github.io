@@ -886,13 +886,19 @@ footer{border-top:1px solid var(--border);padding:40px 0;margin-top:40px}
       </div>
 
       <form class="contact-form glass reveal" id="contactForm">
-        <div class="field"><label for="cf-name">Name</label><input id="cf-name" type="text" placeholder="Your name" required /></div>
-        <div class="field"><label for="cf-email">Email</label><input id="cf-email" type="email" placeholder="you@email.com" required /></div>
-        <div class="field"><label for="cf-msg">Message</label><textarea id="cf-msg" placeholder="Tell me about your operation or opportunity…" required></textarea></div>
-        <button type="submit" class="btn btn-primary" data-cursor style="width:100%;justify-content:center">Send Message
+        <!-- Anti-spam honeypot -->
+        <input type="text" name="_honey" style="display:none">
+        <!-- Disable captcha for seamless AJAX submission -->
+        <input type="hidden" name="_captcha" value="false">
+        
+        <div class="field"><label for="cf-name">Name</label><input id="cf-name" name="name" type="text" placeholder="Your name" required /></div>
+        <div class="field"><label for="cf-email">Email</label><input id="cf-email" name="email" type="email" placeholder="you@email.com" required /></div>
+        <div class="field"><label for="cf-msg">Message</label><textarea id="cf-msg" name="message" placeholder="Tell me about your operation or opportunity…" required></textarea></div>
+        <button type="submit" id="cf-submit" class="btn btn-primary" data-cursor style="width:100%;justify-content:center">
+          <span id="cf-submit-text">Send Message</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
         </button>
-        <p class="form-note">Opens your email client — no data is stored.</p>
+        <p class="form-note">Sends directly to my inbox — your details are kept private.</p>
       </form>
     </div>
   </div>
@@ -952,13 +958,60 @@ $('#copyEmail').addEventListener('click',e=>{
   if(navigator.clipboard){e.preventDefault();navigator.clipboard.writeText('kanistusvm@gmail.com').then(()=>showToast('Email copied to clipboard ✓')).catch(()=>{window.location.href='mailto:kanistusvm@gmail.com'})}
 });
 
-/* ---------- CONTACT FORM (mailto) ---------- */
-$('#contactForm').addEventListener('submit',e=>{
+/* ---------- CONTACT FORM (FormSubmit.co AJAX) ---------- */
+const contactForm = $('#contactForm');
+const cfSubmitBtn = $('#cf-submit');
+const cfSubmitText = $('#cf-submit-text');
+
+contactForm.addEventListener('submit', e => {
   e.preventDefault();
-  const n=$('#cf-name').value,em=$('#cf-email').value,m=$('#cf-msg').value;
-  const body=encodeURIComponent(`${m}\n\n— ${n} (${em})`);
-  window.location.href=`mailto:kanistusvm@gmail.com?subject=${encodeURIComponent('Portfolio enquiry from '+n)}&body=${body}`;
-  showToast('Opening your email client…');
+  
+  // Update UI to loading state
+  cfSubmitBtn.disabled = true;
+  cfSubmitText.textContent = 'Sending...';
+  
+  const name = $('#cf-name').value;
+  const email = $('#cf-email').value;
+  const message = $('#cf-msg').value;
+  const honey = $('input[name="_honey"]')?.value || '';
+  
+  // Honeypot check
+  if (honey) {
+    showToast('Spam detected!');
+    cfSubmitBtn.disabled = false;
+    cfSubmitText.textContent = 'Send Message';
+    return;
+  }
+
+  fetch('https://formsubmit.co/ajax/kanistusvm@gmail.com', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      email: email,
+      message: message,
+      _subject: `New Portfolio Message from ${name}`
+    })
+  })
+  .then(res => {
+    if (res.ok) return res.json();
+    throw new Error('Failed to send');
+  })
+  .then(data => {
+    showToast('Message sent successfully! ✓');
+    contactForm.reset();
+  })
+  .catch(err => {
+    console.error(err);
+    showToast('Failed to send message. Please try again.');
+  })
+  .finally(() => {
+    cfSubmitBtn.disabled = false;
+    cfSubmitText.textContent = 'Send Message';
+  });
 });
 
 /* ============================================================
