@@ -270,8 +270,17 @@ section{position:relative}
 .scene-bar .title{font-family:'Space Grotesk',sans-serif;font-size:.82rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
 .scene-bar .live{font-size:.74rem;color:var(--green);display:flex;align-items:center;gap:7px}
 .scene-bar .live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
+.scene-viewport{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}
+.scene-viewport::-webkit-scrollbar{height:6px}
+.scene-viewport::-webkit-scrollbar-track{background:rgba(255,255,255,0.01)}
+.scene-viewport::-webkit-scrollbar-thumb{background:rgba(34,211,238,0.25);border-radius:10px}
 #scene-canvas{width:100%;height:clamp(380px,42vw,460px);display:block}
-@media (max-width:640px){#scene-canvas{height:380px}}
+@media (max-width:640px){
+  #scene-canvas{width:800px;height:250px;min-width:800px}
+  .scene-bar{padding:10px 14px}
+  .scene-bar .dots{display:none}
+  .scene-bar .title{font-size:.7rem;letter-spacing:.05em}
+}
 .scene-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border)}
 @media (max-width:640px){.scene-stats{grid-template-columns:1fr 1fr}}
 .scene-stats div{padding:16px 20px;border-right:1px solid var(--border)}
@@ -475,7 +484,7 @@ footer{border-top:1px solid var(--border);padding:40px 0;margin-top:40px}
   <div class="wrap hero-inner">
     <div class="hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow">Logistics Control Tower</span>
+        <span class="eyebrow">Supply Chain Control Tower</span>
         <h1 class="reveal">Engineering <span class="grad-text">supply chains</span> that scale.</h1>
         <div class="role reveal">Supply Chain&nbsp;&nbsp;|&nbsp;&nbsp;Operations&nbsp;&nbsp;|&nbsp;&nbsp;Inventory Analyst</div>
         <p class="tagline reveal">Supply Chain &amp; Operations Analyst experienced in <b>inventory optimization, warehouse operations, ERP implementation, process improvement</b> and operational excellence — building systems that reduce waste and create measurable business value.</p>
@@ -600,7 +609,9 @@ footer{border-top:1px solid var(--border);padding:40px 0;margin-top:40px}
         <div class="title">Supply Chain Control Tower · End-to-End</div>
         <div class="live">LIVE</div>
       </div>
-      <canvas id="scene-canvas"></canvas>
+      <div class="scene-viewport">
+        <canvas id="scene-canvas"></canvas>
+      </div>
       <div class="scene-stats">
         <div><div class="k">Units in Flow</div><div class="v" id="sc-units">0</div></div>
         <div><div class="k">In-Transit</div><div class="v" id="sc-transit">0</div></div>
@@ -874,9 +885,9 @@ footer{border-top:1px solid var(--border);padding:40px 0;margin-top:40px}
             <span class="ci-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
             <span><span class="ci-k">LinkedIn</span><br><span class="ci-v">linkedin.com/in/kanistus</span></span>
           </a>
-          <a class="cinfo" data-cursor href="https://kanistus.github.io" target="_blank" rel="noopener">
-            <span class="ci-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-            <span><span class="ci-k">Portfolio</span><br><span class="ci-v">kanistus.github.io</span></span>
+          <a class="cinfo" data-cursor href="https://github.com/Kanistus/" target="_blank" rel="noopener">
+            <span class="ci-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></span>
+            <span><span class="ci-k">GitHub</span><br><span class="ci-v">github.com/Kanistus</span></span>
           </a>
           <a class="cinfo" data-cursor href="resume.pdf" target="_blank" download="Kanistus_VM_Resume.pdf">
             <span class="ci-ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
@@ -1233,7 +1244,7 @@ if(hasGSAP){
 
   function buildLayout(){
     mobile = w<640;
-    scale = Math.max(0.7, Math.min(1.15, w/1100));
+    scale = Math.max(mobile?0.48:0.7, Math.min(1.15, w/1100));
     groundY = h*0.72;        // base ground line for buildings
     roadY   = h*0.83;        // road centre line for vehicles (raised, close to buildings)
     L = {
@@ -1246,8 +1257,8 @@ if(hasGSAP){
       house:       w*0.925
     };
     // shared building geometry (so smoke / belt / boxes agree)
-    G.facBW = mobile?78:104;  G.facBH = mobile?80:98;
-    G.whBW  = mobile?104:138; G.whBH  = mobile?74:92;
+    G.facBW = mobile?56:104;  G.facBH = mobile?56:98;
+    G.whBW  = mobile?72:138; G.whBH  = mobile?50:92;
     G.whX   = L.warehouse - G.whBW*0.3;            // warehouse left edge
     // chimney tip (matches drawFactory: chimney at x+facBW*0.16, width facBW*0.14, top by-facBH*0.34)
     G.chimX = L.factory + G.facBW*0.16 + G.facBW*0.07;
@@ -1367,7 +1378,33 @@ if(hasGSAP){
     if(roof){ctx.fillStyle='rgba(34,211,238,0.13)';ctx.beginPath();ctx.moveTo(x-5,by);ctx.lineTo(x+bw/2,by-bh*0.28);ctx.lineTo(x+bw+5,by);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(34,211,238,0.45)';ctx.stroke();}
     return by;
   }
-  function label(x,y,txt){ctx.fillStyle='rgba(139,151,173,0.8)';ctx.font='600 10px "Space Grotesk",sans-serif';ctx.textAlign='center';ctx.fillText(txt,x,y);}
+  function label(x,y,txt){
+    ctx.fillStyle='rgba(139,151,173,0.8)';
+    ctx.font=mobile ? '600 8px "Space Grotesk",sans-serif' : '600 10px "Space Grotesk",sans-serif';
+    ctx.textAlign='center';
+    
+    // Shorten labels on mobile to prevent overlapping
+    let displayTxt = txt;
+    if (mobile) {
+      if (txt === 'SOURCING') displayTxt = 'SOURCE';
+      if (txt === 'MANUFACTURING') displayTxt = 'MFG';
+      if (txt === 'WAREHOUSE') displayTxt = 'WHSE';
+      if (txt === 'DISTRIBUTION') displayTxt = 'DIST';
+      if (txt === 'RETAIL') displayTxt = 'RETAIL';
+      if (txt === 'CUSTOMER') displayTxt = 'CUST';
+    }
+    
+    // Prevent off-screen text
+    const metrics = ctx.measureText(displayTxt);
+    const halfWidth = metrics.width / 2;
+    let targetX = x;
+    if (x - halfWidth < 4) {
+      targetX = halfWidth + 4;
+    } else if (x + halfWidth > w - 4) {
+      targetX = w - halfWidth - 4;
+    }
+    ctx.fillText(displayTxt,targetX,y);
+  }
 
   function drawGear(cx,cy,r,teeth,ang){
     ctx.save();ctx.translate(cx,cy);ctx.rotate(ang);
@@ -1379,7 +1416,7 @@ if(hasGSAP){
   }
   function drawPort(){
     const cx=L.port, s=scale;
-    const bw=mobile?96:128;
+    const bw=mobile?60:128;
     const x=cx-bw*0.42;
     // water strip at base
     ctx.fillStyle='rgba(34,90,130,0.30)';ctx.fillRect(x-6,groundY-9,bw+12,9);
@@ -1495,7 +1532,7 @@ if(hasGSAP){
     ctx.restore();
   }
   function drawDistribution(){
-    const bw=mobile?96:120, bh=mobile?60:74;
+    const bw=mobile?64:120, bh=mobile?42:74;
     const x=L.distribution-bw*0.5, by=buildingBase(x,bw,bh,false);
     if(nodeGlow[1]>0){ctx.save();ctx.shadowColor='rgba(52,211,153,0.7)';ctx.shadowBlur=18*nodeGlow[1];ctx.strokeStyle=`rgba(52,211,153,${nodeGlow[1]})`;ctx.lineWidth=1.5;roundRect(x,by,bw,bh,5);ctx.stroke();ctx.restore();}
     // flat cross-dock roof line
@@ -1518,7 +1555,7 @@ if(hasGSAP){
     label(L.distribution,groundY+15,'DISTRIBUTION');
   }
   function drawRetail(){
-    const bw=mobile?78:96, bh=mobile?64:78;
+    const bw=mobile?54:96, bh=mobile?44:78;
     const x=L.retail-bw*0.5, by=buildingBase(x,bw,bh,false);
     if(nodeGlow[2]>0){ctx.save();ctx.shadowColor='rgba(52,211,153,0.7)';ctx.shadowBlur=18*nodeGlow[2];ctx.strokeStyle=`rgba(52,211,153,${nodeGlow[2]})`;ctx.lineWidth=1.5;roundRect(x,by,bw,bh,5);ctx.stroke();ctx.restore();}
     // awning
@@ -1533,7 +1570,7 @@ if(hasGSAP){
     label(x+bw/2,groundY+15,'RETAIL');
   }
   function drawHouse(){
-    const bw=mobile?58:68, bh=mobile?52:62;
+    const bw=mobile?40:68, bh=mobile?36:62;
     const x=L.house-bw*0.5, by=groundY-bh;
     ctx.save();if(houseGlow>0){ctx.shadowColor='rgba(52,211,153,0.7)';ctx.shadowBlur=20*houseGlow;}
     ctx.fillStyle='rgba(16,24,40,0.95)';roundRect(x,by,bw,bh,4);ctx.fill();ctx.restore();
